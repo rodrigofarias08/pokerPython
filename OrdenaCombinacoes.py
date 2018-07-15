@@ -89,8 +89,8 @@ def ordena_quadra(combinacoes_quadra):
     kickers_diferentes_em_ordem = []
     empatados_no_kicker = []
     empatados_no_kicker_em_ordem = []
-    for i, e in enumerate(empatados_em_ordem, 0):  # Percorre o vetor de quadras diferentes para fazer uma lista de kickers para
-        # cada índice de quadra diferente
+    for i, e in enumerate(empatados_em_ordem, 0):  # Percorre o vetor de quadras diferentes para fazer uma lista de
+        # kickers para cada índice de quadra diferente
         kickers_diferentes.append([])
         kickers_diferentes_em_ordem.append([])
         empatados_no_kicker.append([])
@@ -117,6 +117,10 @@ def ordena_quadra(combinacoes_quadra):
                         combinacoes_quadra.pop(j)
                         break
     return combinacoes_ordenadas
+
+
+def ordena_casa_completa(combinacoes_full):
+    return combinacoes_full
 
 
 def desempate(melhor_combinacao, n_adversarios):
@@ -161,33 +165,45 @@ def desempate(melhor_combinacao, n_adversarios):
             empatados = cont7 - 1
             cont7 = 0
         elif cont6 > 1 and melhor_combinacao[i][0] == 6:
-            # melhor_combinacao[i:i + cont6] = ordenaCasaCompleta(melhor_combinacao[i:i + cont6])
+            melhor_combinacao[i:i + cont6] = ordena_casa_completa(melhor_combinacao[i:i + cont6])
             for comb in melhor_combinacao[i:i + cont6]:
                 comb.append([False, [comb[3]]])
             empatados = cont6 - 1
             cont6 = 0
         elif cont5 > 1 and melhor_combinacao[i][0] == 5:
-            # melhor_combinacao[i:i + cont5] = ordenaCor(melhor_combinacao[i:i + cont5])
+            # melhor_combinacao[i:i + cont5] = ordena_cor(melhor_combinacao[i:i + cont5])
+            for comb in melhor_combinacao[i:i + cont5]:
+                comb.append([False, [comb[3]]])
             empatados = cont5 - 1
             cont5 = 0
         elif cont4 > 1 and melhor_combinacao[i][0] == 4:
-            # melhor_combinacao[i:i + cont4] = ordenaSequencia(melhor_combinacao[i:i + cont4])
+            # melhor_combinacao[i:i + cont4] = ordena_sequencia(melhor_combinacao[i:i + cont4])
+            for comb in melhor_combinacao[i:i + cont4]:
+                comb.append([False, [comb[3]]])
             empatados = cont4 - 1
             cont4 = 0
         elif cont3 > 1 and melhor_combinacao[i][0] == 3:
-            # melhor_combinacao[i:i + cont3] = ordenaTrinca(melhor_combinacao[i:i + cont3])
+            # melhor_combinacao[i:i + cont3] = ordena_trinca(melhor_combinacao[i:i + cont3])
+            for comb in melhor_combinacao[i:i + cont3]:
+                comb.append([False, [comb[3]]])
             empatados = cont3 - 1
             cont3 = 0
         elif cont2 > 1 and melhor_combinacao[i][0] == 2:
-            # melhor_combinacao[i:i + cont2] = ordena2Pares(melhor_combinacao[i:i + cont2])
+            # melhor_combinacao[i:i + cont2] = ordena_2_pares(melhor_combinacao[i:i + cont2])
+            for comb in melhor_combinacao[i:i + cont2]:
+                comb.append([False, [comb[3]]])
             empatados = cont2 - 1
             cont2 = 0
         elif cont1 > 1 and melhor_combinacao[i][0] == 1:
-            # melhor_combinacao[i:i + cont1] = ordenaPar(melhor_combinacao[i:i + cont1])
+            # melhor_combinacao[i:i + cont1] = ordena_par(melhor_combinacao[i:i + cont1])
+            for comb in melhor_combinacao[i:i + cont1]:
+                comb.append([False, [comb[3]]])
             empatados = cont1 - 1
             cont1 = 0
         elif cont0 > 1 and melhor_combinacao[i][0] == 0:
-            # melhor_combinacao[i:i + cont0] = ordenaCartaAlta(melhor_combinacao[i:i + cont0])
+            # melhor_combinacao[i:i + cont0] = ordena_carta_alta(melhor_combinacao[i:i + cont0])
+            for comb in melhor_combinacao[i:i + cont0]:
+                comb.append([False, [comb[3]]])
             empatados = cont0 - 1
             cont0 = 0
         else:
