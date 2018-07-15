@@ -1,3 +1,5 @@
+from typing import List, Any, Union
+
 import SorteiaOrdenaCartas as Sor
 
 
@@ -39,20 +41,24 @@ def ordena_seq_cor(combinacoes_seq_cor):
         comb.append([False, []])  # Adiciona a variável de índice 4 que informará se há empate com essa combinação e
         # com quais jogadores está empatado.
         cartas_alta.append(comb[2][0])
-    ordem = Sor.ordena_varias_cartas(cartas_alta)
-    ordem_sem_emp = []  # Indicador de combinações diferentes
+    ordem = Sor.ordena_varias_cartas(cartas_alta.copy())
+    cartas_alta_sem_emp = []  # Indicador de combinações diferentes (kickers)
     empatados = []  # Indicador de quais jogadores estão empatados com essa mão
-    for i, o in enumerate(ordem, 0):
-        if not (o in ordem_sem_emp):
-            ordem_sem_emp.append(o)
+    for i, o in enumerate(cartas_alta, 0):
+        if not (o in cartas_alta_sem_emp):
+            cartas_alta_sem_emp.append(o)
             empatados.append([False, [combinacoes_seq_cor[i][3]]])
         else:
-            empatados[ordem_sem_emp.index(o)][0] = True
-            empatados[ordem_sem_emp.index(o)][1].append(combinacoes_seq_cor[i][3])
+            empatados[cartas_alta_sem_emp.index(o)][0] = True
+            empatados[cartas_alta_sem_emp.index(o)][1].append(combinacoes_seq_cor[i][3])
+    cartas_alta_em_ordem = Sor.ordena_varias_cartas(cartas_alta_sem_emp.copy())
+    empatados_em_ordem = []
+    for q in cartas_alta_em_ordem:
+        empatados_em_ordem.append(empatados[cartas_alta_sem_emp.index(q)])
     for carta in ordem:
         for i, comb in enumerate(combinacoes_seq_cor, 0):
             if carta == comb[2][0]:
-                combinacoes_seq_cor[i][4] = empatados[ordem_sem_emp.index(carta)]
+                combinacoes_seq_cor[i][4] = empatados_em_ordem[cartas_alta_em_ordem.index(carta)]
                 combinacoes_ordenadas.append(combinacoes_seq_cor[i])
                 combinacoes_seq_cor.pop(i)
                 break
@@ -60,18 +66,12 @@ def ordena_seq_cor(combinacoes_seq_cor):
 
 
 def ordena_quadra(combinacoes_quadra):
-    combinacoes_ordenadas = []
+    combinacoes_ordenadas = []  # Combinações ordenadas usando também o kicker
     indice_quadra = []
-    kicker = []
     for comb in combinacoes_quadra:
         indice_quadra.append(comb[2][0])
-        kicker.append(comb[2][4])
         comb.append([False, []])  # Adiciona a variável de índice 4 que informará se há empate com essa combinação e
         # com quais jogadores está empatado.
-    print(indice_quadra)
-    print(kicker)
-    indice_quadra = Sor.ordena_varias_cartas(indice_quadra)
-    kicker = Sor.ordena_varias_cartas(kicker)
     quadras = []  # Indicador de combinações diferentes
     empatados = []  # Indicador de quais jogadores estão empatados com essa mão sem considerar o kicker ainda
     for i, q in enumerate(indice_quadra, 0):
@@ -81,18 +81,41 @@ def ordena_quadra(combinacoes_quadra):
         else:
             empatados[quadras.index(q[0])][0] = True
             empatados[quadras.index(q[0])][1].append(combinacoes_quadra[i][3])
-    for i in empatados:
-        for e in i:  # percorrer a lista de empatados e fazer a comparação dos kickers
-            print(e)
-    print(quadras)
-    print(empatados)
-    for i in indice_quadra:
-        for j, comb in enumerate(combinacoes_quadra, 0):
-            if i == comb[2][0]:
-                combinacoes_quadra[j][4] = empatados[quadras.index(i[0])]
-                combinacoes_ordenadas.append(combinacoes_quadra[j])
-                combinacoes_quadra.pop(j)
-                break
+    quadras_em_ordem = Sor.ordena_varias_cartas_sem_naipe(quadras.copy())
+    empatados_em_ordem = []
+    for q in quadras_em_ordem:
+        empatados_em_ordem.append(empatados[quadras.index(q)])
+    kickers_diferentes = []
+    kickers_diferentes_em_ordem = []
+    empatados_no_kicker = []
+    empatados_no_kicker_em_ordem = []
+    for i, e in enumerate(empatados_em_ordem, 0):  # Percorre o vetor de quadras diferentes para fazer uma lista de kickers para
+        # cada índice de quadra diferente
+        kickers_diferentes.append([])
+        kickers_diferentes_em_ordem.append([])
+        empatados_no_kicker.append([])
+        empatados_no_kicker_em_ordem.append([])
+        for emp in e[1]:  # Percorre a lista de empatados com essa mesma quadra para obter os kickers
+            for comb in combinacoes_quadra:
+                if emp == comb[3]:
+                    if not (comb[2][4][0] in kickers_diferentes[i]):
+                        kickers_diferentes[i].append(comb[2][4][0])
+                        empatados_no_kicker[i].append([False, [comb[3]]])
+                    else:
+                        empatados_no_kicker[i][kickers_diferentes[i].index(comb[2][4][0])][0] = True
+                        empatados_no_kicker[i][kickers_diferentes[i].index(comb[2][4][0])][1].append(comb[3])
+        kickers_diferentes_em_ordem[i] = Sor.ordena_varias_cartas_sem_naipe(kickers_diferentes[i].copy())
+        for k in kickers_diferentes_em_ordem[i]:
+            empatados_no_kicker_em_ordem[i].append(empatados_no_kicker[i][kickers_diferentes[i].index(k)])
+    for q in empatados_no_kicker_em_ordem:
+        for k in q:
+            for e in k[1]:
+                for j, comb in enumerate(combinacoes_quadra, 0):
+                    if e == comb[3]:
+                        comb[4] = k
+                        combinacoes_ordenadas.append(comb)
+                        combinacoes_quadra.pop(j)
+                        break
     return combinacoes_ordenadas
 
 
@@ -139,6 +162,8 @@ def desempate(melhor_combinacao, n_adversarios):
             cont7 = 0
         elif cont6 > 1 and melhor_combinacao[i][0] == 6:
             # melhor_combinacao[i:i + cont6] = ordenaCasaCompleta(melhor_combinacao[i:i + cont6])
+            for comb in melhor_combinacao[i:i + cont6]:
+                comb.append([False, [comb[3]]])
             empatados = cont6 - 1
             cont6 = 0
         elif cont5 > 1 and melhor_combinacao[i][0] == 5:

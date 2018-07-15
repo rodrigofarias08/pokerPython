@@ -44,6 +44,17 @@ def ordena_varias_cartas(cartas):
     return cartas_em_ordem
 
 
+def ordena_varias_cartas_sem_naipe(cartas):
+    cartas_em_ordem = []
+    for c in range(0, len(cartas)):
+        carta_alta = cartas[0] + 'e'
+        for c2 in range(1, len(cartas)):
+            carta_alta = ordena_duas_cartas(carta_alta, cartas[c2] + 'e')[0]
+        cartas_em_ordem.append(carta_alta[0])
+        cartas.pop(cartas.index(carta_alta[0]))
+    return cartas_em_ordem
+
+
 def sorteia_carta():
     random.shuffle(cartas_em_jogo)
     return cartas_em_jogo.pop(0)
@@ -57,7 +68,7 @@ def distribui_cartas(n_adversarios):
         print("A mão do computador {} é: {} {}".format(index, mao[0], mao[1]))
         maos_jogadores.append(mao)
         index += 1
-    mao = ['Ke', 'Qe']  # ordenaDuasCartas(sorteiaCarta(), sorteiaCarta())
+    mao = ['Qe', 'Qe']  # ordenaDuasCartas(sorteiaCarta(), sorteiaCarta())
     print("\nSua mão é: {} {}\n".format(mao[0], mao[1]))
     maos_jogadores.append(mao)
     return maos_jogadores
