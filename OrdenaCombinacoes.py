@@ -120,7 +120,50 @@ def ordena_quadra(combinacoes_quadra):
 
 
 def ordena_casa_completa(combinacoes_full):
-    return combinacoes_full
+    combinacoes_ordenadas = []
+    indice_trinca = []
+    indice_par = []
+    for comb in combinacoes_full:
+        indice_trinca.append(comb[2][0])
+        indice_par.append(comb[2][3])
+        comb.append([False, []])  # Adiciona a variável de índice 4 que informará se há empate com essa combinação e
+        # com quais jogadores está empatado.
+    trincas = []  # Indicador de combinações diferentes de trincas
+    pares = []  # Indicador de combinações diferentes de pares para cada trinca
+    empatados_p = []  # Indicador de quais jogadores estão empatados com a mesma trinca e o mesmo par
+    for i, t in enumerate(indice_trinca, 0):
+        if not (t[0] in trincas):
+            trincas.append(t[0])
+            pares.append([indice_par[i][0]])
+            empatados_p.append([[False, [combinacoes_full[i][3]]]])
+        else:  # Se a trinca já existir no vetor trincas
+            if not (indice_par[i][0] in pares[trincas.index(t[0])]):  # Se o par desta trinca for diferente dos pares
+                # das outras trincas de mesmo índice
+                pares[trincas.index(t[0])].append(indice_par[i][0])
+                empatados_p[trincas.index(t[0])].append([False, [combinacoes_full[i][3]]])
+            else:  # Se a combinação de trinca e par já existirem registra o empate entre essas combinações
+                empatados_p[trincas.index(t[0])][pares[trincas.index(t[0])].index(indice_par[i][0])][0] = True
+                empatados_p[trincas.index(t[0])][pares[trincas.index(t[0])].index(indice_par[i][0])][1].\
+                    append(combinacoes_full[i][3])
+    trincas_ordem = Sor.ordena_varias_cartas_sem_naipe(trincas.copy())
+    empatados_p_em_ordem = []
+    pares_em_ordem = []
+    for t in trincas_ordem:
+        pares_em_ordem.append(pares[trincas.index(t)])
+        pares_em_ordem[-1] = Sor.ordena_varias_cartas_sem_naipe(pares_em_ordem[-1].copy())
+        empatados_p_em_ordem.append([])
+        for p in pares_em_ordem[-1]:
+            empatados_p_em_ordem[-1].append(empatados_p[trincas.index(t)][pares[trincas.index(t)].index(p)])
+    for i, e in enumerate(trincas_ordem, 0):  # Percorre o vetor de trincas diferentes
+        for ep in empatados_p_em_ordem[i]:  # percorre o vetor de pares para essa trinca
+            for jogador in ep[1]:  # percorre os jogadores com esse par
+                for k, comb in enumerate(combinacoes_full, 0):
+                    if jogador == comb[3]:  # Procura a combinação do jogador na lista original
+                        comb[4] = ep  # Define se há empates nessa combinação
+                        combinacoes_ordenadas.append(comb)  # e anexa a combinação na lista ordenada
+                        combinacoes_full.pop(k)  # Remove a combinação da lista original
+                        break
+    return combinacoes_ordenadas
 
 
 def desempate(melhor_combinacao, n_adversarios):
@@ -166,8 +209,6 @@ def desempate(melhor_combinacao, n_adversarios):
             cont7 = 0
         elif cont6 > 1 and melhor_combinacao[i][0] == 6:
             melhor_combinacao[i:i + cont6] = ordena_casa_completa(melhor_combinacao[i:i + cont6])
-            for comb in melhor_combinacao[i:i + cont6]:
-                comb.append([False, [comb[3]]])
             empatados = cont6 - 1
             cont6 = 0
         elif cont5 > 1 and melhor_combinacao[i][0] == 5:

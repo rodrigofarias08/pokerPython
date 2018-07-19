@@ -107,7 +107,7 @@ flop = [Sor.sorteia_carta(), Sor.sorteia_carta(), Sor.sorteia_carta()]
 turn = Sor.sorteia_carta()
 river = Sor.sorteia_carta()
 # board = [flop[0], flop[1], flop[2], turn, river]
-board = ['Je', 'Je', 'Je', 'Qe', 'Qe']
+board = ['3e', '3e', '3e', '4e', '4e']
 
 print("|" + " Cartas Comunitárias ".center(90, '-') + "|")
 print("|" + ' ' * 90 + "|")
